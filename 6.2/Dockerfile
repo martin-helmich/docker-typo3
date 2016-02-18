@@ -9,6 +9,7 @@ RUN cd /var/www/html && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
+    ln -s typo3_src/_.htaccess .htaccess && \
     touch FIRST_INSTALL && \
     chown -R www-data. .
 
