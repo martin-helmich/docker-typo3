@@ -14,7 +14,7 @@ This container does not ship a database management system; which means you'll ha
 
         $ docker run -d --name typo3-db \
            -e MYSQL_ROOT_PASSWORD=yoursupersecretpassword \
-           -e MYSQL_USER=typo3
+           -e MYSQL_USER=typo3 \
            -e MYSQL_PASSWORD=yourothersupersecretpassword \
            -e MYSQL_DATABASE=typo3
            mariadb:latest
