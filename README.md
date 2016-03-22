@@ -16,8 +16,10 @@ This container does not ship a database management system; which means you'll ha
            -e MYSQL_ROOT_PASSWORD=yoursupersecretpassword \
            -e MYSQL_USER=typo3 \
            -e MYSQL_PASSWORD=yourothersupersecretpassword \
-           -e MYSQL_DATABASE=typo3
-           mariadb:latest
+           -e MYSQL_DATABASE=typo3 \
+           mariadb:latest \
+           --character-set-server=utf8 \
+           --collation-server=utf8_unicode_ci
 
 2. Next, use this image to create your TYPO3 container and link it with the database container:
 
@@ -34,5 +36,6 @@ Available tags
 This repository offers the following image tags:
 
 - `latest` maps to the latest available version
+- `8.0` and `8` for the latest available version from the `8.*` respectively `8.0.*` branch.
 - `7.6` and `7` for the latest available version from the `7.*` respectively `7.6.*` branch.
 - `6.2` and `6` for the latest available version from the `6.*` respectively `6.2.*` branch.
