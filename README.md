@@ -16,8 +16,10 @@ This container does not ship a database management system; which means you'll ha
            -e MYSQL_ROOT_PASSWORD=yoursupersecretpassword \
            -e MYSQL_USER=typo3 \
            -e MYSQL_PASSWORD=yourothersupersecretpassword \
-           -e MYSQL_DATABASE=typo3
-           mariadb:latest
+           -e MYSQL_DATABASE=typo3 \
+           mariadb:latest \
+           --character-set-server=utf8 \
+           --collation-server=utf8_unicode_ci
 
 2. Next, use this image to create your TYPO3 container and link it with the database container:
 
