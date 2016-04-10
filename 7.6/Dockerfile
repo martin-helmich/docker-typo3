@@ -10,6 +10,10 @@ RUN cd /var/www/html && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
     ln -s typo3_src/_.htaccess .htaccess && \
+    mkdir typo3temp && \
+    mkdir typo3conf && \
+    mkdir fileadmin && \
+    mkdir uploads && \
     touch FIRST_INSTALL && \
     chown -R www-data. .
 
@@ -26,3 +30,9 @@ RUN echo 'always_populate_raw_post_data = -1\nmax_execution_time = 240\nmax_inpu
 
 # Configure Apache as needed
 RUN a2enmod rewrite
+
+# Configure volumes
+VOLUME /var/www/html/fileadmin
+VOLUME /var/www/html/typo3conf
+VOLUME /var/www/html/typo3temp
+VOLUME /var/www/html/uploads
