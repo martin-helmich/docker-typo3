@@ -9,13 +9,14 @@ extensionsv87:
 
 typo3_db:
   image: mariadb:latest
+  command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;'
   volumes:
     - ~/docker/persistence/mariadb/typo3-db:/var/lib/mysql \
   environment:
     MYSQL_ROOT_PASSWORD: root
-    MYSQL_USER: typo3_87
+    MYSQL_USER: typo3
     MYSQL_PASSWORD: typo3
-    MYSQL_DATABASE: typo3
+    MYSQL_DATABASE: typo3_87
    
 
 
