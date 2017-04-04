@@ -4,18 +4,6 @@ MAINTAINER Martin Helmich <typo3@martin-helmich.de>
 # Install TYPO3
 RUN apt-get update &&\
     apt-get install -y wget
-RUN cd /var/www/html && \
-    wget -O - https://get.typo3.org/6.2 | tar -xzf - && \
-    ln -s typo3_src-* typo3_src && \
-    ln -s typo3_src/index.php && \
-    ln -s typo3_src/typo3 && \
-    ln -s typo3_src/_.htaccess .htaccess && \
-    mkdir typo3temp && \
-    mkdir typo3conf && \
-    mkdir fileadmin && \
-    mkdir uploads && \
-    touch FIRST_INSTALL && \
-    chown -R www-data. .
 
 # Configure PHP
 RUN apt-get install -y \
@@ -35,7 +23,10 @@ RUN apt-get install -y graphicsmagick
 RUN a2enmod rewrite
 
 # Configure volumes
-VOLUME /var/www/html/fileadmin
-VOLUME /var/www/html/typo3conf
-VOLUME /var/www/html/typo3temp
-VOLUME /var/www/html/uploads
+VOLUME /var/www/html
+
+
+ADD install_typo3.sh /install_typo3.sh
+RUN chmod 755 /install_typo3.sh
+
+CMD /install_typo3.sh 6.2

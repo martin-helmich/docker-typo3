@@ -1,0 +1,25 @@
+extensionsv62:
+  image: undkonsorten/typo3:6.2
+  links:
+    - typo3_db:db
+  ports:
+    - 8089:80
+  volumes:
+    - ~/docker/persistence/typo3_62/extensionsv62/fileadmin:/var/www/html/fileadmin
+    - ~/docker/persistence/typo3_62/extensionsv62/typo3conf:/var/www/html/typo3conf
+    - ~/docker/persistence/typo3_62/extensionsv62/typo3temp:/var/www/html/typo3temp
+    - ~/docker/persistence/typo3_62/extensionsv62/uploads:/var/www/html/uploads
+    - ~/docker/persistence/typo3_62/extensionsv62/typo3:/var/www/html/typo3
+
+typo3_db:
+  image: mariadb:latest
+  volumes:
+    - ~/docker/persistence/mariadb/typo3-db:/var/lib/mysql \
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: typo3_62
+    MYSQL_PASSWORD: typo3
+    MYSQL_DATABASE: typo3
+   
+
+

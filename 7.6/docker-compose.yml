@@ -1,0 +1,21 @@
+extensionsv76:
+  image: undkonsorten/typo3:7.6
+  links:
+    - typo3_db:db
+  ports:
+    - 8088:80
+  volumes:
+    - ~/docker/persistence/typo3_76/extensionsv76:/var/www/html
+
+typo3_db:
+  image: mariadb:latest
+  volumes:
+    - ~/docker/persistence/mariadb/typo3-db:/var/lib/mysql \
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: typo3_76
+    MYSQL_PASSWORD: typo3
+    MYSQL_DATABASE: typo3
+   
+
+
