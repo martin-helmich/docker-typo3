@@ -1,4 +1,4 @@
-FROM php:5.6-apache
+FROM php:7-apache
 MAINTAINER Martin Helmich <typo3@martin-helmich.de>
 
 # Install TYPO3
@@ -25,8 +25,7 @@ RUN a2enmod rewrite
 # Configure volumes
 VOLUME /var/www/html
 
-
 ADD install_typo3.sh /install_typo3.sh
 RUN chmod 755 /install_typo3.sh
 
-CMD /install_typo3.sh 6.2
+CMD /install_typo3.sh 8.7
