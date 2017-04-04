@@ -32,7 +32,7 @@ This container does not ship a database management system; which means you'll ha
             -p 80:80 \
             martinhelmich/typo3:7
 
-Alternatifliy you can also use docker-compose.
+ ALternative you can also use docker-compose.
 
 
 4. After that, simply open `http://localhost/` in your browser to start the TYPO3 install tool. **Note**: If you're using Docker Machine to run Docker on Windows or MacOS, you'll need the Docker VM's IP instead (which you can find out using the `docker-machine ip default` command).
