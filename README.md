@@ -26,7 +26,7 @@ This container does not ship a database management system; which means you'll ha
         $ docker run -d --name typo3-web \
             --link typo3-db:db \
             -p 80:80 \
-            martinhelmich/typo3:7
+            martinhelmich/typo3:8
 
 3. After that, simply open `http://localhost/` in your browser to start the TYPO3 install tool. **Note**: If you're using Docker Machine to run Docker on Windows or MacOS, you'll need the Docker VM's IP instead (which you can find out using the `docker-machine ip default` command).
 
@@ -40,6 +40,6 @@ Available tags
 This repository offers the following image tags:
 
 - `latest` maps to the latest available version
-- `8.0` and `8` for the latest available version from the `8.*` respectively `8.0.*` branch.
+- `8.7` and `8` for the latest available version from the `8.*` respectively `8.7.*` branch.
 - `7.6` and `7` for the latest available version from the `7.*` respectively `7.6.*` branch.
 - `6.2` and `6` for the latest available version from the `6.*` respectively `6.2.*` branch.
