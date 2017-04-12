@@ -18,8 +18,7 @@ RUN apt-get update &&\
     echo 'always_populate_raw_post_data = -1\nmax_execution_time = 240\nmax_input_vars = 1500\nupload_max_filesize = 32M\npost_max_size = 32M' > /usr/local/etc/php/conf.d/typo3.ini && \
 # Configure Apache as needed
     a2enmod rewrite && \
-    echo
-RUN    apt-get clean && \
+    apt-get clean && \
     apt-get -y purge \
         libxml2-dev libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -29,7 +28,7 @@ RUN    apt-get clean && \
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
 RUN cd /var/www/html && \
-    wget -O - https://get.typo3.org/8 | tar -xzf - && \
+    wget -O - https://get.typo3.org/8.7 | tar -xzf - && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
