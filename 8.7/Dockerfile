@@ -40,6 +40,11 @@ RUN cd /var/www/html && \
     touch FIRST_INSTALL && \
     chown -R www-data. .
 
+RUN cd /tmp \
+&& wget http://ftp.de.debian.org/debian/pool/main/p/pcre3/libpcre3_8.39-3_amd64.deb \
+&& dpkg -i libpcre3_8.39-3_amd64.deb \
+&& rm -f libpcre3_8.39-3_amd64.deb
+
 # Configure volumes
 VOLUME /var/www/html/fileadmin
 VOLUME /var/www/html/typo3conf
