@@ -2,7 +2,9 @@ FROM php:5.6-apache
 MAINTAINER Martin Helmich <typo3@martin-helmich.de>
 
 # Install TYPO3
-RUN apt-get update &&\
+RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list.d/stretch.list && \
+    echo "Package: *\\nPin: release n=jessie\\nPin-Priority: 900\\n\\nPackage: libpcre3*\\nPin: release n=stretch\\nPin-Priority: 1000" > /etc/apt/preferences && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         wget \
 # Configure PHP
@@ -13,6 +15,10 @@ RUN apt-get update &&\
         zlib1g-dev \
 # Install required 3rd party tools
         graphicsmagick && \
+# Fix outdated PCRE bug in Debian 8
+    apt-get install -y -t stretch libpcre3 libpcre3-dev && \
+
+# Configure extensions
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
     docker-php-ext-install -j$(nproc) mysqli soap gd zip opcache && \
     echo 'always_populate_raw_post_data = -1\nmax_execution_time = 240\nmax_input_vars = 1500\nupload_max_filesize = 32M\npost_max_size = 32M' > /usr/local/etc/php/conf.d/typo3.ini && \
