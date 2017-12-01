@@ -1,5 +1,5 @@
 FROM php:5.6-apache
-MAINTAINER Martin Helmich <typo3@martin-helmich.de>
+LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
 # Install TYPO3
 RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list.d/stretch.list && \

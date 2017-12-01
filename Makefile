@@ -10,6 +10,3 @@ all: $(DOCKERFILES)
 7.6/Dockerfile: $(DEPENDS)
 	sed -e 's/PHPVER/5.6/' -e 's/TYPOVER/7.6/' $< > $@
 
-8.7/Dockerfile: $(DEPENDS)
-	sed -e 's/PHPVER/7/' -e 's/TYPOVER/8.7/' $< > $@
-

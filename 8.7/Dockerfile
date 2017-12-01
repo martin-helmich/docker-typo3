@@ -1,23 +1,18 @@
-FROM php:7-apache
-MAINTAINER Martin Helmich <typo3@martin-helmich.de>
+FROM php:7.2-apache
+LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
 # Install TYPO3
-RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list.d/stretch.list && \
-    echo "Package: *\\nPin: release n=jessie\\nPin-Priority: 900\\n\\nPackage: libpcre3*\\nPin: release n=stretch\\nPin-Priority: 1000" > /etc/apt/preferences && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         wget \
 # Configure PHP
         libxml2-dev libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
-        libpng12-dev \
+        libpng-dev \
         zlib1g-dev \
 # Install required 3rd party tools
         graphicsmagick && \
-# Fix outdated PCRE bug in Debian 8
-    apt-get install -y -t stretch libpcre3 libpcre3-dev && \
-
 # Configure extensions
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
     docker-php-ext-install -j$(nproc) mysqli soap gd zip opcache && \
