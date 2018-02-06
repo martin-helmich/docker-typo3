@@ -6,12 +6,12 @@ RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list
     echo "Package: *\\nPin: release n=jessie\\nPin-Priority: 900\\n\\nPackage: libpcre3*\\nPin: release n=stretch\\nPin-Priority: 1000" > /etc/apt/preferences && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
-        wget \
 # Configure PHP
-        libxml2-dev libfreetype6-dev \
+        libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng12-dev \
+        libxml2-dev \
         zlib1g-dev \
 # Install required 3rd party tools
         graphicsmagick && \
@@ -25,29 +25,25 @@ RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list
 # Configure Apache as needed
     a2enmod rewrite && \
     apt-get clean && \
-    apt-get -y purge \
-        libxml2-dev libfreetype6-dev \
+    apt-get -y purge --auto-remove \
+        libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng12-dev \
+        libxml2-dev \
         zlib1g-dev && \
-    rm -rf /var/lib/apt/lists/* /usr/src/*
+    rm -rf /var/lib/apt/lists/*
 
-RUN cd /var/www/html && \
-    wget -O - https://get.typo3.org/7.6 | tar -xzf - && \
-    ln -s typo3_src-* typo3_src && \
-    ln -s typo3_src/index.php && \
-    ln -s typo3_src/typo3 && \
-    ln -s typo3_src/_.htaccess .htaccess && \
-    mkdir typo3temp && \
-    mkdir typo3conf && \
-    mkdir fileadmin && \
-    mkdir uploads && \
-    touch FIRST_INSTALL && \
-    chown -R www-data. .
+VOLUME /var/www/html
 
-# Configure volumes
-VOLUME /var/www/html/fileadmin
-VOLUME /var/www/html/typo3conf
-VOLUME /var/www/html/typo3temp
-VOLUME /var/www/html/uploads
+RUN set -ex; \
+    curl -o typo3.tar.gz -fSL https://get.typo3.org/7.6; \
+    mkdir /usr/src/typo3; \
+    tar -xzf typo3.tar.gz -C /usr/src/typo3; \
+    rm typo3.tar.gz; \
+    chown -R www-data:www-data /usr/src/typo3
+
+COPY docker-entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
