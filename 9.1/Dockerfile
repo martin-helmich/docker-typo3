@@ -29,7 +29,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
 RUN cd /var/www/html && \
-    wget -O - https://get.typo3.org/8.7 | tar -xzf - && \
+    wget -O - https://get.typo3.org/9.1 | tar -xzf - && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
