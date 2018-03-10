@@ -1,0 +1,15 @@
+sudo: required
+services:
+  - docker
+env:
+  - TYPO3_VERSION=6.2
+  - TYPO3_VERSION=7.6
+  - TYPO3_VERSION=8.7
+  - TYPO3_VERSION=9.1
+
+script:
+  - cd $TYPO3_VERSION
+  - docker-compose build
+  - docker-compose up -d
+  - sleep 10
+  - curl -vf http://localhost/typo3/install/
