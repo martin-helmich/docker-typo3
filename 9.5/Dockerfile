@@ -34,7 +34,7 @@ RUN cd /var/www/html && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
     cp typo3/sysext/install/Resources/Private/FolderStructureTemplateFiles/root-htaccess typo3_src/_.htaccess && \
-    ln -s typo3_src/_.htaccess .htaccess && \
+    ln typo3_src/_.htaccess .htaccess && \
     mkdir typo3temp && \
     mkdir typo3conf && \
     mkdir fileadmin && \
