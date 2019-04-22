@@ -26,4 +26,4 @@ all: $(DOCKERFILES)
 	sed -e 's/PHPVER/7.2/' -e 's/TYPOVER/9.4/' $< > $@
 
 9.5/Dockerfile: Dockerfile.in
-	sed -e 's/PHPVER/7.2/' -e 's/TYPOVER/9.5/' $< > $@
+	sed -e 's/PHPVER/7.2/' -e 's/TYPOVER/9.5/' -e '/_.htaccess/d' $< > $@
