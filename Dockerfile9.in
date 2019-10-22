@@ -1,4 +1,4 @@
-FROM php:7.2-apache-stretch
+FROM php:PHPVER-apache-stretch
 LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
 # Install TYPO3
@@ -29,7 +29,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
 RUN cd /var/www/html && \
-    wget -O - https://get.typo3.org/9.5 | tar -xzf - && \
+    wget -O - https://get.typo3.org/TYPOVER | tar -xzf - && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
