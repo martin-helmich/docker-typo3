@@ -37,6 +37,21 @@ This container does not ship a database management system; which means you'll ha
 
  ![](doc/database-setup.png)
 
+Special use cases
+-----------------
+
+### Using PostgreSQL instead of MySQL
+
+This image comes with full support for PostgreSQL as database driver. In this case, simply start a PostgreSQL database instead of MySQL:
+
+    $ docker run -d --name typo3-db \
+        -e POSTGRES_PASSWORD=yoursupersecretpassword \
+        -e POSTGRES_USER=typo3 \
+        -e POSTGRES_DATABASE=typo3 \
+        postgres:latest
+
+Then, proceed as before.
+
 Available tags
 --------------
 
