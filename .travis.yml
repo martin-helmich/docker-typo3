@@ -14,4 +14,4 @@ script:
   - docker-compose build
   - docker-compose up -d
   - sleep 10
-  - curl -vf http://localhost/typo3/install/
+  - curl -vf http://localhost/typo3/install.php || curl -v http://localhost/typo3/install/
