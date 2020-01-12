@@ -58,7 +58,8 @@ Available tags
 This repository offers the following image tags:
 
 - `latest` maps to the latest available LTS version (currently, latest `9.5.*`)
-- `10.1` and `10` for the latest available version from the `10.*` respectively `10.1.*` branch. 
+- `10.2` and `10` for the latest available version from the `10.*` respectively `10.2.*` branch. 
+- `10.1` for the latest available version from the `10.1.*` branch. 
 - `9.5` and `9` for the latest available version from the `9.*` respectively `9.5.*` branch.
 - `8.7` and `8` for the latest available version from the `8.*` respectively `8.7.*` branch.
 - `7.6` and `7` for the latest available version from the `7.*` respectively `7.6.*` branch.

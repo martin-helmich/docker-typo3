@@ -30,3 +30,6 @@ all: $(DOCKERFILES)
 
 10.1/Dockerfile: Dockerfile9.in
 	sed -e 's/PHPVER/7.2/' -e 's/TYPOVER/10.1/' $< > $@
+
+10.2/Dockerfile: Dockerfile9.in
+	sed -e 's/PHPVER/7.2/' -e 's/TYPOVER/10.2/' $< > $@
