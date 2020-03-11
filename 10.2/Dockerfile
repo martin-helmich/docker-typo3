@@ -1,3 +1,20 @@
+# Docker image for TYPO3 CMS
+# Copyright (C) 2016-2020  Martin Helmich <martin@helmich.me>
+#                          and contributors <https://github.com/martin-helmich/docker-typo3/graphs/contributors>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 FROM php:7.2-apache-stretch
 LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
@@ -30,7 +47,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
 RUN cd /var/www/html && \
-    wget -O - https://get.typo3.org/10.1 | tar -xzf - && \
+    wget -O - https://get.typo3.org/10.2 | tar -xzf - && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
