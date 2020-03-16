@@ -8,12 +8,12 @@ jobs:
   updater:
 
     runs-on: ubuntu-latest
+    container: golang:1.13
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Run updater
-        uses: docker://golang:1.13
         run: |
           sh -c "cd ./updater && go build -o ../run-updater"
           echo '${{ secrets.APP_KEY }}' > ./key.pem
