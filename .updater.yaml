@@ -1,0 +1,37 @@
+versions:
+  - major: 10
+    constraint: ~10.3.0
+    destination: "10.3"
+    template: ./updater/Dockerfile.tmpl
+    templateData:
+      PHPVersion: 7.4
+  - major: 10
+    constraint: ~10.2.0
+    destination: "10.2"
+    template: ./updater/Dockerfile.tmpl
+    templateData:
+      PHPVersion: 7.4
+  - major: 10
+    constraint: ~10.1.0
+    destination: "10.1"
+    template: ./updater/Dockerfile.tmpl
+    templateData:
+      PHPVersion: 7.4
+  - major: 10
+    constraint: ~10.0.0
+    destination: "10.0"
+    template: ./updater/Dockerfile.tmpl
+    templateData:
+      PHPVersion: 7.4
+  - major: 9
+    constraint: ^9.5
+    destination: "9.5"
+    template: ./updater/Dockerfile.tmpl
+    templateData:
+      PHPVersion: 7.2
+  - major: 8
+    constraint: ^8.7
+    destination: "8.7"
+    template: ./updater/Dockerfile.tmpl
+    templateData:
+      PHPVersion: 7.2

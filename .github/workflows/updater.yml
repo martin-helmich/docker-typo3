@@ -1,0 +1,23 @@
+name: Check for new releases
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  updater:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run updater
+        uses: docker://golang:1.13
+        run: |
+          sh -c "cd ./updater && go build -o ../run-updater"
+          echo '${{ secrets.APP_KEY }}' > ./key.pem
+          ./run-updater \
+            --key-file ./key.pem \
+            --app-id ${{ secrets.APP_ID }} \
+            --installation-id ${{ secrets.INST_ID }}
