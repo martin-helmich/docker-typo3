@@ -1,0 +1,27 @@
+name: Build image and test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:      
+      matrix:
+        typo3-versions: ['10.2', '10.1', '9.5', '8.7', '7.6', '6.2']
+
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and start image
+        run: |
+          cd ${{ matrix.typo3-versions }}
+          docker-compose build
+          docker-compose up -d
+
+          sleep 20
+
+          curl -vLf http://localhost
+          docker-compose down -v
