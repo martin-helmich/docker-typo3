@@ -28,14 +28,14 @@ RUN apt-get update && \
         libmcrypt-dev \
         libpng-dev \
         libpq-dev \
-        {{- if ge .Value.PHP.Minor 4 }}
+        {{- if ge .Values.PHP.Minor 4 }}
         libzip-dev \
         {{- end }}
         zlib1g-dev \
 # Install required 3rd party tools
         graphicsmagick && \
 # Configure extensions
-    {{- if ge .Value.PHP.Minor 4 }}
+    {{- if ge .Values.PHP.Minor 4 }}
     docker-php-ext-configure gd --with-libdir=/usr/include/ --with-jpeg --with-freetype && \
     {{- else }}
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
@@ -50,7 +50,7 @@ RUN apt-get update && \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev \
-        {{- if ge .Value.PHP.Minor 4 }}
+        {{- if ge .Values.PHP.Minor 4 }}
         libzip-dev \
         {{- end }}
         zlib1g-dev && \
