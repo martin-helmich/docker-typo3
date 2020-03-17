@@ -2,7 +2,13 @@ name: Build image and test
 
 on:
   push:
+    paths:
+      - '*/Dockerfile'
+      - '*/docker-compose.yml'
   pull_request:
+    paths:
+      - '*/Dockerfile'
+      - '*/docker-compose.yml'
 
 jobs:
   build:
