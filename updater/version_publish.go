@@ -18,7 +18,8 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 	}
 
 	r := rand.Intn(9000 + 1000)
-	branch := fmt.Sprintf("update-typo-%d-to-%s-%d", v.Major, latest.Version, r)
+	//branch := fmt.Sprintf("update-typo-%d-to-%s-%d", v.Major, latest.Version, r)
+	branch := fmt.Sprintf("update-typo-%d-to-%s", v.Major, latest.Version, r)
 	name := strings.Replace(path.Join(v.Destination, "Dockerfile"), "../", "", -1)
 
 	refs, _, err := client.Git.GetRefs(ctx, Owner, Repo, "heads/master")
@@ -29,20 +30,30 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 	master := refs[0]
 
 	fmt.Printf("master is at %s\n", *master.Object.SHA)
-	fmt.Printf("creating branch %s\n", branch)
 
-	_, _, err = client.Git.CreateRef(
-		ctx,
-		Owner,
-		Repo,
-		&github.Reference{
-			Ref:    strptr(fmt.Sprintf("heads/%s", branch)),
-			Object: master.Object,
-		},
-	)
-
+	branchRefs, _, err := client.Git.GetRefs(ctx, Owner, Repo, fmt.Sprintf("heads/%s", branch))
 	if err != nil {
 		return err
+	}
+
+	if len(branchRefs) > 0 {
+		fmt.Printf("branch %s already exists\n", branch)
+	} else {
+		fmt.Printf("creating branch %s\n", branch)
+
+		_, _, err = client.Git.CreateRef(
+			ctx,
+			Owner,
+			Repo,
+			&github.Reference{
+				Ref:    strptr(fmt.Sprintf("heads/%s", branch)),
+				Object: master.Object,
+			},
+		)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	_, _, err = client.Repositories.CreateFile(
@@ -70,6 +81,20 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 	}
 
 	t := true
+
+	prs, _, err := client.PullRequests.List(ctx, Owner, Repo, &github.PullRequestListOptions{
+		State: "open",
+		Head:  fmt.Sprintf("%s:%s", Owner, branch),
+	})
+
+	if err != nil {
+		return nil
+	}
+
+	if len(prs) > 0 {
+		fmt.Printf("PR already exists: %d", prs[0].ID)
+		return nil
+	}
 
 	pr, _, err := client.PullRequests.Create(
 		ctx,
