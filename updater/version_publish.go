@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"path"
 	"strings"
 
@@ -17,9 +16,7 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 		return err
 	}
 
-	r := rand.Intn(9000 + 1000)
-	//branch := fmt.Sprintf("update-typo-%d-to-%s-%d", v.Major, latest.Version, r)
-	branch := fmt.Sprintf("update-typo-%d-to-%s", v.Major, latest.Version, r)
+	branch := fmt.Sprintf("update-typo-%d-to-%s", v.Major, latest.Version)
 	name := strings.Replace(path.Join(v.Destination, "Dockerfile"), "../", "", -1)
 
 	refs, _, err := client.Git.GetRefs(ctx, Owner, Repo, "heads/master")
@@ -31,10 +28,7 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 
 	fmt.Printf("master is at %s\n", *master.Object.SHA)
 
-	branchRefs, _, err := client.Git.GetRefs(ctx, Owner, Repo, fmt.Sprintf("heads/%s", branch))
-	if err != nil {
-		return err
-	}
+	branchRefs, _, _ := client.Git.GetRefs(ctx, Owner, Repo, fmt.Sprintf("heads/%s", branch))
 
 	if len(branchRefs) > 0 {
 		fmt.Printf("branch %s already exists\n", branch)
