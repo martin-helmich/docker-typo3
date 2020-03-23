@@ -50,25 +50,58 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 		}
 	}
 
-	_, _, err = client.Repositories.CreateFile(
+	fc, _, _, err := client.Repositories.GetContents(
 		ctx,
 		Owner,
 		Repo,
 		name,
-		&github.RepositoryContentFileOptions{
-			Message: strptr(fmt.Sprintf("Bump TYPO3 %d to version %s", v.Major, latest.Version)),
-			Content: contents,
-			Branch:  &branch,
-			Author: &github.CommitAuthor{
-				Name:  strptr("TYPO3 Docker Update Bot"),
-				Email: strptr("martin@helmich.me"),
-			},
-			Committer: &github.CommitAuthor{
-				Name:  strptr("TYPO3 Docker Update Bot"),
-				Email: strptr("martin@helmich.me"),
-			},
+		&github.RepositoryContentGetOptions{
+			Ref: fmt.Sprintf("heads/%s", branch),
 		},
 	)
+
+	if fc == nil {
+		_, _, err = client.Repositories.CreateFile(
+			ctx,
+			Owner,
+			Repo,
+			name,
+			&github.RepositoryContentFileOptions{
+				Message: strptr(fmt.Sprintf("Bump TYPO3 %d to version %s", v.Major, latest.Version)),
+				Content: contents,
+				Branch:  &branch,
+				Author: &github.CommitAuthor{
+					Name:  strptr("TYPO3 Docker Update Bot"),
+					Email: strptr("martin@helmich.me"),
+				},
+				Committer: &github.CommitAuthor{
+					Name:  strptr("TYPO3 Docker Update Bot"),
+					Email: strptr("martin@helmich.me"),
+				},
+			},
+		)
+	} else {
+		_, _, err = client.Repositories.UpdateFile(
+			ctx,
+			Owner,
+			Repo,
+			name,
+			&github.RepositoryContentFileOptions{
+				Message: strptr(fmt.Sprintf("Bump TYPO3 %d to version %s", v.Major, latest.Version)),
+				SHA:     fc.SHA,
+				Content: contents,
+				Branch:  &branch,
+				Author: &github.CommitAuthor{
+					Name:  strptr("TYPO3 Docker Update Bot"),
+					Email: strptr("martin@helmich.me"),
+				},
+				Committer: &github.CommitAuthor{
+					Name:  strptr("TYPO3 Docker Update Bot"),
+					Email: strptr("martin@helmich.me"),
+				},
+			},
+		)
+	}
 
 	if err != nil {
 		return err
