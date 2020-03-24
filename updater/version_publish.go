@@ -80,7 +80,7 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 				},
 			},
 		)
-	} else {
+	} else if *fc.Content != string(contents) {
 		_, _, err = client.Repositories.UpdateFile(
 			ctx,
 			Owner,
