@@ -9,6 +9,7 @@ import (
 
 	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v29/github"
+	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/yaml.v2"
 )
 
@@ -66,22 +67,38 @@ func main() {
 	ctx := context.Background()
 	client := github.NewClient(&http.Client{Transport: itr})
 
+	repo, err := git.PlainOpen(".")
+	if err != nil {
+		panic(err)
+	}
+
 	for _, v := range updateSpec.Versions {
-		changed, latest, err := processVersion(&v)
+		fmt.Printf("PROCESSING version %s\n", v.Destination)
+
+		df, latest, err := processVersion(&v)
 		if err != nil {
 			panic(err)
 		}
 
-		if !changed {
-			fmt.Printf("Dockerfile for version %d did not change\n", v.Major)
+		wf, err := updateWorkflowFile(&v)
+		if err != nil {
+			fmt.Printf("ERROR while updating workflow file for version %d: %s\n", v.Major, err.Error())
 			continue
 		}
 
-		if !noPR {
-			if err := publishVersion(ctx, client, v, latest); err != nil {
-				fmt.Printf("ERROR while creating PR for version %d: %s\n", v.Major, err.Error())
-				continue
-			}
+		if !mustIsChanged(repo, df) && !mustIsChanged(repo, wf) {
+			fmt.Printf("SKIP no files have changed for version %s\n", v.Destination)
+			continue
+		}
+
+		if noPR {
+			fmt.Printf("SKIP creating PR for version %s\n", v.Destination)
+			continue
+		}
+
+		if err := publishVersion(ctx, client, v, latest, wf); err != nil {
+			fmt.Printf("ERROR while creating PR for version %d: %s\n", v.Major, err.Error())
+			continue
 		}
 	}
 

@@ -1,21 +1,17 @@
-name: Build image and test
+name: Build and test TYPO3 10.1 image
 
 on:
   push:
     paths:
-      - '*/Dockerfile'
-      - '*/docker-compose.yml'
+      - '10.1/Dockerfile'
+      - '10.1/docker-compose.yml'
   pull_request:
     paths:
-      - '*/Dockerfile'
-      - '*/docker-compose.yml'
+      - '10.1/Dockerfile'
+      - '10.1/docker-compose.yml'
 
 jobs:
   build:
-    strategy:      
-      matrix:
-        typo3-versions: ['10.2', '10.1', '9.5', '8.7', '7.6', '6.2']
-
     runs-on: ubuntu-latest
     
     steps:
@@ -23,7 +19,7 @@ jobs:
 
       - name: Build and start image
         run: |
-          cd ${{ matrix.typo3-versions }}
+          cd 10.1
           docker-compose build
           docker-compose up -d
 
