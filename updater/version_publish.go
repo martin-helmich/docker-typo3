@@ -8,15 +8,20 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/google/go-github/v29/github"
+	"github.com/sirupsen/logrus"
 )
 
-func pushToBranch(ctx context.Context, repo *git.Repository, client *github.Client, name string, branch string, msg string) error {
+func pushToBranch(ctx context.Context, l logrus.FieldLogger, repo *git.Repository, client *github.Client, name string, branch string, msg string) error {
+	l = l.WithField("file.name", name)
+	l.Debug("creating commit for modified file")
+
 	changed, err := isChanged(repo, name)
 	if err != nil {
 		return err
 	}
 
 	if !changed {
+		l.Debug("file is not changed -- not commiting")
 		return nil
 	}
 
@@ -36,6 +41,8 @@ func pushToBranch(ctx context.Context, repo *git.Repository, client *github.Clie
 	)
 
 	if fc == nil {
+		l.Debug("file does not exist yet; creating")
+
 		_, _, err = client.Repositories.CreateFile(
 			ctx,
 			Owner,
@@ -58,6 +65,8 @@ func pushToBranch(ctx context.Context, repo *git.Repository, client *github.Clie
 
 		return err
 	} else if *fc.Content != string(contents) {
+		l.Debug("file exists and is changed; updating")
+
 		_, _, err = client.Repositories.UpdateFile(
 			ctx,
 			Owner,
@@ -96,6 +105,8 @@ func publishVersion(
 	branch := fmt.Sprintf("update-typo-%d-to-%s", v.Major, latest.Version)
 	dockerfileName := path.Join(v.Destination, "Dockerfile")
 
+	l := logrus.WithFields(logrus.Fields{"version.branch": v.Destination, "branch.name": branch})
+
 	refs, _, err := client.Git.GetRefs(ctx, Owner, Repo, "heads/master")
 	if err != nil {
 		return err
@@ -103,14 +114,25 @@ func publishVersion(
 
 	master := refs[0]
 
-	fmt.Printf("master is at %s\n", *master.Object.SHA)
+	l.WithField("master.sha", *master.Object.SHA).Debug("found master")
 
 	branchRefs, _, _ := client.Git.GetRefs(ctx, Owner, Repo, fmt.Sprintf("heads/%s", branch))
 
 	if len(branchRefs) > 0 {
-		fmt.Printf("branch %s already exists\n", branch)
+		l.Info("branch already exists -- force-resetting")
+
+		_, _, err = client.Git.UpdateRef(
+			ctx,
+			Owner,
+			Repo,
+			&github.Reference{
+				Ref:    strptr(fmt.Sprintf("heads/%s", branch)),
+				Object: master.Object,
+			},
+			true,
+		)
 	} else {
-		fmt.Printf("creating branch %s\n", branch)
+		l.Info("branch does not exist -- creating")
 
 		_, _, err = client.Git.CreateRef(
 			ctx,
@@ -127,11 +149,11 @@ func publishVersion(
 		}
 	}
 
-	if err := pushToBranch(ctx, repo, client, dockerfileName, branch, fmt.Sprintf("Bump TYPO3 %d to version %s", v.Major, latest.Version)); err != nil {
+	if err := pushToBranch(ctx, l, repo, client, dockerfileName, branch, fmt.Sprintf("Bump TYPO3 %d to version %s", v.Major, latest.Version)); err != nil {
 		return err
 	}
 
-	if err := pushToBranch(ctx, repo, client, workflowName, branch, fmt.Sprintf("Update Github workflow for TYPO3 %s", v.Destination)); err != nil {
+	if err := pushToBranch(ctx, l, repo, client, workflowName, branch, fmt.Sprintf("Update Github workflow for TYPO3 %s", v.Destination)); err != nil {
 		return err
 	}
 
