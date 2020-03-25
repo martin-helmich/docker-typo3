@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"io/ioutil"
-	"net/http"
+	"os"
 
-	"github.com/bradleyfalzon/ghinstallation"
+	"github.com/go-git/go-git/v5"
 	"github.com/google/go-github/v29/github"
-	"gopkg.in/src-d/go-git.v4"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v2"
 )
 
@@ -17,10 +17,9 @@ const Owner = "martin-helmich"
 const Repo = "docker-typo3"
 
 var configFile string
-var keyFile string
-var appID int64
-var installationID int64
 var noPR bool
+var accessToken string
+var verbose bool
 
 type UpdateVersionSpec struct {
 	Major        int         `yaml:"major"`
@@ -41,13 +40,23 @@ type TemplateData struct {
 	Values   interface{}
 }
 
+func init() {
+	logrus.SetOutput(os.Stderr)
+	logrus.SetLevel(logrus.WarnLevel)
+}
+
 func main() {
 	flag.StringVar(&configFile, "config", ".updater.yaml", "path to config")
-	flag.StringVar(&keyFile, "key-file", "", "path to key file")
-	flag.Int64Var(&appID, "app-id", 0, "application ID")
-	flag.Int64Var(&installationID, "installation-id", 0, "installation ID")
+	flag.StringVar(&accessToken, "access-token", "", "access token")
 	flag.BoolVar(&noPR, "no-pr", false, "do not create pull requests")
+	flag.BoolVar(&verbose, "v", false, "more logging")
 	flag.Parse()
+
+	if verbose {
+		logrus.SetLevel(logrus.DebugLevel)
+	}
+
+	ctx := context.Background()
 
 	updaterContents, err := ioutil.ReadFile(configFile)
 	if err != nil {
@@ -59,13 +68,13 @@ func main() {
 		panic(err)
 	}
 
-	itr, err := ghinstallation.NewKeyFromFile(http.DefaultTransport, appID, installationID, keyFile)
-	if err != nil {
-		panic(err)
-	}
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: accessToken},
+	)
 
-	ctx := context.Background()
-	client := github.NewClient(&http.Client{Transport: itr})
+	httpClient := oauth2.NewClient(ctx, ts)
+
+	client := github.NewClient(httpClient)
 
 	repo, err := git.PlainOpen(".")
 	if err != nil {
@@ -73,7 +82,8 @@ func main() {
 	}
 
 	for _, v := range updateSpec.Versions {
-		fmt.Printf("PROCESSING version %s\n", v.Destination)
+		l := logrus.WithField("version.branch", v.Destination)
+		l.Info("processing version")
 
 		df, latest, err := processVersion(&v)
 		if err != nil {
@@ -82,22 +92,22 @@ func main() {
 
 		wf, err := updateWorkflowFile(&v)
 		if err != nil {
-			fmt.Printf("ERROR while updating workflow file for version %d: %s\n", v.Major, err.Error())
+			l.WithError(err).Error("error while updating workflow file")
 			continue
 		}
 
 		if !mustIsChanged(repo, df) && !mustIsChanged(repo, wf) {
-			fmt.Printf("SKIP no files have changed for version %s\n", v.Destination)
+			l.Info("skipping -- no files have changed")
 			continue
 		}
 
 		if noPR {
-			fmt.Printf("SKIP creating PR for version %s\n", v.Destination)
+			l.Info("skipping creating PR")
 			continue
 		}
 
-		if err := publishVersion(ctx, client, v, latest, wf); err != nil {
-			fmt.Printf("ERROR while creating PR for version %d: %s\n", v.Major, err.Error())
+		if err := publishVersion(ctx, client, repo, v, latest, wf); err != nil {
+			l.WithError(err).Error("error while creating PR")
 			continue
 		}
 	}

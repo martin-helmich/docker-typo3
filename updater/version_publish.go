@@ -6,10 +6,20 @@ import (
 	"io/ioutil"
 	"path"
 
+	"github.com/go-git/go-git/v5"
 	"github.com/google/go-github/v29/github"
 )
 
-func pushToBranch(ctx context.Context, client *github.Client, name string, branch string, msg string) error {
+func pushToBranch(ctx context.Context, repo *git.Repository, client *github.Client, name string, branch string, msg string) error {
+	changed, err := isChanged(repo, name)
+	if err != nil {
+		return err
+	}
+
+	if !changed {
+		return nil
+	}
+
 	contents, err := ioutil.ReadFile(name)
 	if err != nil {
 		return err
@@ -75,7 +85,14 @@ func pushToBranch(ctx context.Context, client *github.Client, name string, branc
 	return nil
 }
 
-func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionSpec, latest *TYPO3Version, workflowName string) error {
+func publishVersion(
+	ctx context.Context,
+	client *github.Client,
+	repo *git.Repository,
+	v UpdateVersionSpec,
+	latest *TYPO3Version,
+	workflowName string,
+) error {
 	branch := fmt.Sprintf("update-typo-%d-to-%s", v.Major, latest.Version)
 	dockerfileName := path.Join(v.Destination, "Dockerfile")
 
@@ -110,11 +127,11 @@ func publishVersion(ctx context.Context, client *github.Client, v UpdateVersionS
 		}
 	}
 
-	if err := pushToBranch(ctx, client, dockerfileName, branch, fmt.Sprintf("Bump TYPO3 %d to version %s", v.Major, latest.Version)); err != nil {
+	if err := pushToBranch(ctx, repo, client, dockerfileName, branch, fmt.Sprintf("Bump TYPO3 %d to version %s", v.Major, latest.Version)); err != nil {
 		return err
 	}
 
-	if err := pushToBranch(ctx, client, workflowName, branch, fmt.Sprintf("Update Github workflow for TYPO3 %s", v.Destination)); err != nil {
+	if err := pushToBranch(ctx, repo, client, workflowName, branch, fmt.Sprintf("Update Github workflow for TYPO3 %s", v.Destination)); err != nil {
 		return err
 	}
 

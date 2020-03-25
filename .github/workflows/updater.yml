@@ -16,8 +16,5 @@ jobs:
       - name: Run updater
         run: |
           sh -c "cd ./updater && go build -o ../run-updater"
-          echo '${{ secrets.APP_KEY }}' > ./key.pem
           ./run-updater \
-            --key-file ./key.pem \
-            --app-id ${{ secrets.APP_ID }} \
-            --installation-id ${{ secrets.INST_ID }}
+            --access-key ${{ secrets.ACCESS_KEY }}
