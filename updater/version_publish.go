@@ -64,29 +64,36 @@ func pushToBranch(ctx context.Context, l logrus.FieldLogger, repo *git.Repositor
 		)
 
 		return err
-	} else if *fc.Content != string(contents) {
-		l.Debug("file exists and is changed; updating")
+	} else {
+		remoteContents, err := fc.GetContent()
+		if err != nil {
+			return err
+		}
 
-		_, _, err = client.Repositories.UpdateFile(
-			ctx,
-			Owner,
-			Repo,
-			name,
-			&github.RepositoryContentFileOptions{
-				Message: &msg,
-				SHA:     fc.SHA,
-				Content: contents,
-				Branch:  &branch,
-				Author: &github.CommitAuthor{
-					Name:  strptr("TYPO3 Docker Update Bot"),
-					Email: strptr("martin@helmich.me"),
+		if string(contents) != remoteContents {
+			l.Debug("file exists and is changed; updating")
+
+			_, _, err = client.Repositories.UpdateFile(
+				ctx,
+				Owner,
+				Repo,
+				name,
+				&github.RepositoryContentFileOptions{
+					Message: &msg,
+					SHA:     fc.SHA,
+					Content: contents,
+					Branch:  &branch,
+					Author: &github.CommitAuthor{
+						Name:  strptr("TYPO3 Docker Update Bot"),
+						Email: strptr("martin@helmich.me"),
+					},
+					Committer: &github.CommitAuthor{
+						Name:  strptr("TYPO3 Docker Update Bot"),
+						Email: strptr("martin@helmich.me"),
+					},
 				},
-				Committer: &github.CommitAuthor{
-					Name:  strptr("TYPO3 Docker Update Bot"),
-					Email: strptr("martin@helmich.me"),
-				},
-			},
-		)
+			)
+		}
 
 		return err
 	}
@@ -161,7 +168,7 @@ func publishVersion(
 
 	prs, _, err := client.PullRequests.List(ctx, Owner, Repo, &github.PullRequestListOptions{
 		State: "open",
-		Head:  fmt.Sprintf("%s:%s", Owner, branch),
+		Head:  branch,
 	})
 
 	if err != nil {
