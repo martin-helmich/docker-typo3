@@ -176,7 +176,7 @@ func publishVersion(
 	}
 
 	if len(prs) > 0 {
-		fmt.Printf("PR already exists: %d", prs[0].ID)
+		l.WithField("pr.number", prs[0].Number).Info("PR already exists")
 		return nil
 	}
 
@@ -192,7 +192,7 @@ func publishVersion(
 		},
 	)
 
-	fmt.Printf("Created PR %d\n", *pr.ID)
+	l.WithField("pr.number", *pr.Number).Info("Created new PR")
 
 	return nil
 }

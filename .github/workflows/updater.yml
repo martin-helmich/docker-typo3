@@ -17,4 +17,5 @@ jobs:
         run: |
           sh -c "cd ./updater && go build -o ../run-updater"
           ./run-updater \
+            -v \
             --access-token ${{ secrets.ACCESS_TOKEN }}
