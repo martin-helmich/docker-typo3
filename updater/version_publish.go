@@ -40,6 +40,10 @@ func pushToBranch(ctx context.Context, l logrus.FieldLogger, repo *git.Repositor
 		},
 	)
 
+	if err != nil {
+		l.WithError(err).Info("error while retrieving file")
+	}
+
 	if fc == nil {
 		l.Debug("file does not exist yet; creating")
 
@@ -64,41 +68,42 @@ func pushToBranch(ctx context.Context, l logrus.FieldLogger, repo *git.Repositor
 		)
 
 		return err
-	} else {
-		remoteContents, err := fc.GetContent()
-		if err != nil {
-			return err
-		}
+	}
 
-		if string(contents) != remoteContents {
-			l.Debug("file exists and is changed; updating")
-
-			_, _, err = client.Repositories.UpdateFile(
-				ctx,
-				Owner,
-				Repo,
-				name,
-				&github.RepositoryContentFileOptions{
-					Message: &msg,
-					SHA:     fc.SHA,
-					Content: contents,
-					Branch:  &branch,
-					Author: &github.CommitAuthor{
-						Name:  strptr("TYPO3 Docker Update Bot"),
-						Email: strptr("martin@helmich.me"),
-					},
-					Committer: &github.CommitAuthor{
-						Name:  strptr("TYPO3 Docker Update Bot"),
-						Email: strptr("martin@helmich.me"),
-					},
-				},
-			)
-		}
-
+	remoteContents, err := fc.GetContent()
+	if err != nil {
 		return err
 	}
 
-	return nil
+	if string(contents) == remoteContents {
+		l.Debug("file already exists in branch with desired contents; doing nothing")
+		return nil
+	}
+
+	l.Debug("file exists and is changed; updating")
+
+	_, _, err = client.Repositories.UpdateFile(
+		ctx,
+		Owner,
+		Repo,
+		name,
+		&github.RepositoryContentFileOptions{
+			Message: &msg,
+			SHA:     fc.SHA,
+			Content: contents,
+			Branch:  &branch,
+			Author: &github.CommitAuthor{
+				Name:  strptr("TYPO3 Docker Update Bot"),
+				Email: strptr("martin@helmich.me"),
+			},
+			Committer: &github.CommitAuthor{
+				Name:  strptr("TYPO3 Docker Update Bot"),
+				Email: strptr("martin@helmich.me"),
+			},
+		},
+	)
+
+	return err
 }
 
 func publishVersion(
@@ -126,18 +131,21 @@ func publishVersion(
 	branchRefs, _, _ := client.Git.GetRefs(ctx, Owner, Repo, fmt.Sprintf("heads/%s", branch))
 
 	if len(branchRefs) > 0 {
-		l.Info("branch already exists -- force-resetting")
+		l.Info("branch already exists -- doing nothing")
+		/*
+			l.Info("branch already exists -- force-resetting")
 
-		_, _, err = client.Git.UpdateRef(
-			ctx,
-			Owner,
-			Repo,
-			&github.Reference{
-				Ref:    strptr(fmt.Sprintf("heads/%s", branch)),
-				Object: master.Object,
-			},
-			true,
-		)
+			_, _, err = client.Git.UpdateRef(
+				ctx,
+				Owner,
+				Repo,
+				&github.Reference{
+					Ref:    strptr(fmt.Sprintf("heads/%s", branch)),
+					Object: master.Object,
+				},
+				true,
+			)
+		*/
 	} else {
 		l.Info("branch does not exist -- creating")
 
@@ -166,17 +174,21 @@ func publishVersion(
 
 	t := true
 
+	l.Info("looking for existing pull requests")
+
 	prs, _, err := client.PullRequests.List(ctx, Owner, Repo, &github.PullRequestListOptions{
 		State: "open",
-		Head:  branch,
+		Head:  fmt.Sprintf("%s:%s", Owner, branch),
 	})
 
 	if err != nil {
 		return err
 	}
 
+	l.Infof("%d existing (and open) pull requests found", len(prs))
+
 	if len(prs) > 0 {
-		l.WithField("pr.number", prs[0].Number).Info("PR already exists")
+		l.WithField("pr.number", *prs[0].Number).Info("PR already exists")
 		return nil
 	}
 
