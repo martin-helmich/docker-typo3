@@ -172,7 +172,7 @@ func publishVersion(
 	})
 
 	if err != nil {
-		return nil
+		return err
 	}
 
 	if len(prs) > 0 {
