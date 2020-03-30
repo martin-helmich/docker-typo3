@@ -87,7 +87,8 @@ func main() {
 
 		df, latest, err := processVersion(&v)
 		if err != nil {
-			panic(err)
+			l.WithError(err).Error("error while processing version")
+			continue
 		}
 
 		wf, err := updateWorkflowFile(&v)
