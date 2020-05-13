@@ -18,12 +18,16 @@ type TYPO3Version struct {
 	Version         string
 	SemanticVersion *semver.Version
 	TarPackage      TYPO3VersionChecksums
+	ELTS            bool
+	Type            string
 }
 
 func (t *TYPO3Version) UnmarshalJSON(b []byte) error {
 	temp := struct {
 		Version    string                `json:"version"`
 		TarPackage TYPO3VersionChecksums `json:"tar_package"`
+		ELTS       bool                  `json:"elts"`
+		Type       string                `json:"type"`
 	}{}
 
 	if err := json.Unmarshal(b, &temp); err != nil {
@@ -38,6 +42,8 @@ func (t *TYPO3Version) UnmarshalJSON(b []byte) error {
 	t.Version = temp.Version
 	t.SemanticVersion = v
 	t.TarPackage = temp.TarPackage
+	t.ELTS = temp.ELTS
+	t.Type = temp.Type
 
 	return nil
 }

@@ -132,20 +132,6 @@ func publishVersion(
 
 	if len(branchRefs) > 0 {
 		l.Info("branch already exists -- doing nothing")
-		/*
-			l.Info("branch already exists -- force-resetting")
-
-			_, _, err = client.Git.UpdateRef(
-				ctx,
-				Owner,
-				Repo,
-				&github.Reference{
-					Ref:    strptr(fmt.Sprintf("heads/%s", branch)),
-					Object: master.Object,
-				},
-				true,
-			)
-		*/
 	} else {
 		l.Info("branch does not exist -- creating")
 
@@ -205,6 +191,13 @@ func publishVersion(
 	)
 
 	l.WithField("pr.number", *pr.Number).Info("Created new PR")
+
+	if latest.Type == "security" {
+		_, _, err := client.Issues.AddLabelsToIssue(ctx, Owner, Repo, *pr.Number, []string{"security"})
+		if err != nil {
+			l.WithError(err).Error("error while adding 'security' label to PR")
+		}
+	}
 
 	return nil
 }
