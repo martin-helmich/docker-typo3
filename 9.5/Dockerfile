@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-FROM php:7.4-apache-buster
+FROM php:7.2-apache-stretch
 LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
 # Install TYPO3
@@ -28,32 +28,27 @@ RUN apt-get update && \
         libmcrypt-dev \
         libpng-dev \
         libpq-dev \
-        libzip-dev \
         zlib1g-dev \
 # Install required 3rd party tools
         graphicsmagick && \
 # Configure extensions
-    docker-php-ext-configure gd --with-libdir=/usr/include/ --with-jpeg --with-freetype && \
+    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
     docker-php-ext-install -j$(nproc) mysqli soap gd zip opcache intl pgsql pdo_pgsql && \
     echo 'always_populate_raw_post_data = -1\nmax_execution_time = 240\nmax_input_vars = 1500\nupload_max_filesize = 32M\npost_max_size = 32M' > /usr/local/etc/php/conf.d/typo3.ini && \
 # Configure Apache as needed
     a2enmod rewrite && \
+    a2enmod headers && \
     apt-get clean && \
     apt-get -y purge \
         libxml2-dev libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev \
-        libzip-dev \
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
 RUN cd /var/www/html && \
-    wget -O download.tar.gz https://get.typo3.org/9.5.20 && \
-    echo "dd1adf61d7e0fb77b23da0048fbdf67b3ab0be0c273b18197a0b753f39c4e432 download.tar.gz" > download.tar.gz.sum && \
-    sha256sum -c download.tar.gz.sum && \
-    tar -xzf download.tar.gz && \
-    rm download.* && \
+    wget -O - https://get.typo3.org/9.5 | tar -xzf - && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
