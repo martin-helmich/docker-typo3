@@ -30,7 +30,8 @@ RUN apt-get update && \
         libpq-dev \
         zlib1g-dev \
 # Install required 3rd party tools
-        graphicsmagick && \
+        graphicsmagick \
+        ghostscript && \
 # Configure extensions
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
     docker-php-ext-install -j$(nproc) mysqli soap gd zip opcache intl pgsql pdo_pgsql && \
