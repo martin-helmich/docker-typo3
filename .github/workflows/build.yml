@@ -37,3 +37,8 @@ jobs:
 
           docker push martinhelmich/typo3:$VERSION
           docker push martinhelmich/typo3:$MAJOR
+
+          if [[ ${MAJOR} -eq 10 ]] ; then
+            docker tag martinhelmich/typo3:$VERSION martinhelmich/typo3:latest
+            docker push martinhelmich/typo3:latest
+          fi
