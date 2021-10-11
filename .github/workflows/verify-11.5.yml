@@ -1,0 +1,29 @@
+name: Build and test TYPO3 11.5 image
+
+on:
+  push:
+    paths:
+      - '11.5/Dockerfile'
+      - '11.5/docker-compose.yml'
+  pull_request:
+    paths:
+      - '11.5/Dockerfile'
+      - '11.5/docker-compose.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and start image
+        run: |
+          cd 11.5
+          docker-compose build
+          docker-compose up -d
+
+          sleep 20
+
+          curl -vLf http://localhost
+          docker-compose down -v

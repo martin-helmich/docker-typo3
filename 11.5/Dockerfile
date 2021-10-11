@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-FROM php:{{ .Values.PHP.Major }}.{{ .Values.PHP.Minor }}-apache-{{ .Values.Debian }}
+FROM php:8.0-apache-buster
 LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
 # Install TYPO3
@@ -29,18 +29,12 @@ RUN apt-get update && \
         libmcrypt-dev \
         libpng-dev \
         libpq-dev \
-        {{- if or (ge .Values.PHP.Major 8) (and (eq .Values.PHP.Major 7) (ge .Values.PHP.Minor 4)) }}
         libzip-dev \
-        {{- end }}
         zlib1g-dev \
 # Install required 3rd party tools
         graphicsmagick && \
 # Configure extensions
-    {{- if or (ge .Values.PHP.Major 8) (and (eq .Values.PHP.Major 7) (ge .Values.PHP.Minor 4)) }}
     docker-php-ext-configure gd --with-libdir=/usr/include/ --with-jpeg --with-freetype && \
-    {{- else }}
-    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
-    {{- end }}
     docker-php-ext-install -j$(nproc) mysqli soap gd zip opcache intl pgsql pdo_pgsql && \
     echo 'always_populate_raw_post_data = -1\nmax_execution_time = 240\nmax_input_vars = 1500\nupload_max_filesize = 32M\npost_max_size = 32M' > /usr/local/etc/php/conf.d/typo3.ini && \
 # Configure Apache as needed
@@ -51,26 +45,20 @@ RUN apt-get update && \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng-dev \
-        {{- if or (ge .Values.PHP.Major 8) (and (eq .Values.PHP.Major 7) (ge .Values.PHP.Minor 4)) }}
         libzip-dev \
-        {{- end }}
         zlib1g-dev && \
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
 RUN cd /var/www/html && \
-    wget -O download.tar.gz https://get.typo3.org/{{ .Latest }} && \
-    echo "{{ .Checksum }} download.tar.gz" > download.tar.gz.sum && \
+    wget -O download.tar.gz https://get.typo3.org/11.5.0 && \
+    echo "d085b323392545c506cd2647c2914430d05fd4e2e2986e6bd91a863ac14e08c1 download.tar.gz" > download.tar.gz.sum && \
     sha256sum -c download.tar.gz.sum && \
     tar -xzf download.tar.gz && \
     rm download.* && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
     ln -s typo3_src/typo3 && \
-    {{- if ge .Major 9 }}
     cp typo3/sysext/install/Resources/Private/FolderStructureTemplateFiles/root-htaccess .htaccess && \
-    {{- else }}
-    ln -s typo3_src/_.htaccess .htaccess && \
-    {{- end }}
     mkdir typo3temp && \
     mkdir typo3conf && \
     mkdir fileadmin && \
