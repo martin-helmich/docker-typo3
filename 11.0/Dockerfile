@@ -20,6 +20,7 @@ LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
 # Install TYPO3
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         wget \
 # Configure PHP
