@@ -1,0 +1,38 @@
+name: Build and push images
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        version:
+          - "6.2"
+          - "7.6"
+          - "9.5"
+          - "10.4"
+          - "11.0"
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to Docker hub
+        run: |
+          docker login -u ${{ secrets.DOCKERHUB_USER }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image
+        run: |
+          VERSION="${{ matrix.version }}"
+          MAJOR="${MAJOR%.*}"
+
+          cd $VERSION
+          docker build -t martinhelmich/typo3:$VERSION .
+          docker tag martinhelmich/typo3:$VERSION martinhelmich/typo3:$MAJOR
+
+          docker push martinhelmich/typo3:$VERSION
+          docker push martinhelmich/typo3:$MAJOR
