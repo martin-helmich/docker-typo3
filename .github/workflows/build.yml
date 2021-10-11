@@ -17,7 +17,7 @@ jobs:
           - "8.7"
           - "9.5"
           - "10.4"
-          - "11.0"
+          - "11.5"
     
     steps:
       - uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
           docker push martinhelmich/typo3:$VERSION
           docker push martinhelmich/typo3:$MAJOR
 
-          if [[ ${MAJOR} -eq 10 ]] ; then
+          if [[ ${MAJOR} -eq 11 ]] ; then
             docker tag martinhelmich/typo3:$VERSION martinhelmich/typo3:latest
             docker push martinhelmich/typo3:latest
           fi
