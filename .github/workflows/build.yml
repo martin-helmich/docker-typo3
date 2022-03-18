@@ -21,6 +21,10 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Log in to Docker hub
         run: |
@@ -32,13 +36,9 @@ jobs:
           MAJOR="${VERSION%.*}"
 
           cd $VERSION
-          docker build -t martinhelmich/typo3:$VERSION .
-          docker tag martinhelmich/typo3:$VERSION martinhelmich/typo3:$MAJOR
-
-          docker push martinhelmich/typo3:$VERSION
-          docker push martinhelmich/typo3:$MAJOR
+          docker buildx build -t ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push .
+          docker buildx imagetools create ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --tag ${{ secrets.DOCKERHUB_USER }}/typo3:$MAJOR
 
           if [[ ${MAJOR} -eq 11 ]] ; then
-            docker tag martinhelmich/typo3:$VERSION martinhelmich/typo3:latest
-            docker push martinhelmich/typo3:latest
+            docker buildx imagetools create ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --tag ${{ secrets.DOCKERHUB_USER }}/typo3:latest
           fi
