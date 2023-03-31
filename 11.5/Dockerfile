@@ -31,8 +31,12 @@ RUN apt-get update && \
         libpq-dev \
         libzip-dev \
         zlib1g-dev \
+        locales \
 # Install required 3rd party tools
         graphicsmagick && \
+# Configure locale
+    sed -i'' -e "s/^.*en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen && \
+    locale-gen && update-locale LANG="en_US.UTF-8" LANGUAGE="en_US" && \
 # Configure extensions
     docker-php-ext-configure gd --with-libdir=/usr/include/ --with-jpeg --with-freetype && \
     docker-php-ext-install -j$(nproc) mysqli soap gd zip opcache intl pgsql pdo_pgsql && \
