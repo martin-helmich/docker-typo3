@@ -1,4 +1,13 @@
 versions:
+  - major: 12
+    constraint: ~12.4.0
+    destination: "12.4"
+    template: ./updater/Dockerfile.tmpl
+    templateData:
+      PHP:
+        Major: 8
+        Minor: 2
+      Debian: bookworm
   - major: 11
     constraint: ~11.5.0
     destination: "11.5"
@@ -6,8 +15,8 @@ versions:
     templateData:
       PHP:
         Major: 8
-        Minor: 0
-      Debian: buster
+        Minor: 2
+      Debian: bookworm
   - major: 10
     constraint: ~10.4.0
     destination: "10.4"
