@@ -18,6 +18,8 @@
 FROM php:PHPVER-apache-stretch
 LABEL maintainer="Martin Helmich <typo3@martin-helmich.de>"
 
+ARG DOCUMENT_ROOT="/var/www/html"
+
 # Install TYPO3
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -44,9 +46,10 @@ RUN apt-get update && \
         libmcrypt-dev \
         libpng-dev \
         zlib1g-dev && \
+        
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
-RUN cd /var/www/html && \
+RUN cd ${DOCUMENT_ROOT} && \
     wget -O - https://get.typo3.org/TYPOVER | tar -xzf - && \
     ln -s typo3_src-* typo3_src && \
     ln -s typo3_src/index.php && \
@@ -60,7 +63,14 @@ RUN cd /var/www/html && \
     chown -R www-data. .
 
 # Configure volumes
-VOLUME /var/www/html/fileadmin
-VOLUME /var/www/html/typo3conf
-VOLUME /var/www/html/typo3temp
-VOLUME /var/www/html/uploads
+VOLUME ${DOCUMENT_ROOT}/fileadmin
+VOLUME ${DOCUMENT_ROOT}/typo3conf
+VOLUME ${DOCUMENT_ROOT}/typo3temp
+VOLUME ${DOCUMENT_ROOT}/uploads
+
+# Alternative Entrypoint
+COPY docker-entrypoint.s /docker-entrypoint.s
+RUN chmod +x /docker-entrypoint.sh /usr/local/bin/docker-php-entrypoint
+
+ENTRYPOINT ["bash", "/docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
