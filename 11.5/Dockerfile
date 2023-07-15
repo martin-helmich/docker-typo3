@@ -50,8 +50,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /usr/src/*
 
 RUN cd /var/www/html && \
-    wget -O download.tar.gz https://get.typo3.org/11.5.25 && \
-    echo "d5bce09ce98b071e30343928aa0d4f4386a63b8b585738a0c30876aabfb030ec download.tar.gz" > download.tar.gz.sum && \
+    wget -O download.tar.gz https://get.typo3.org/11.5.29 && \
+    echo "0c07a442dfefee1b2d302f3492a44119f0d78806d5b20d5ef5c970fa9810446b download.tar.gz" > download.tar.gz.sum && \
     sha256sum -c download.tar.gz.sum && \
     tar -xzf download.tar.gz && \
     rm download.* && \
