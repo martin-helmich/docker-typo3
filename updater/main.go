@@ -91,11 +91,6 @@ func main() {
 			continue
 		}
 
-		if latest.ELTS {
-			l.Info("version is already in ELTS -- skipping")
-			continue
-		}
-
 		wf, err := updateWorkflowFile(&v)
 		if err != nil {
 			l.WithError(err).Error("error while updating workflow file")
