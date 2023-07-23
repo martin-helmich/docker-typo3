@@ -1,8 +1,9 @@
 TYPO3 Quickstart in Docker
 ==========================
 
-[![Docker Automated build](https://img.shields.io/docker/automated/martinhelmich/typo3.svg)](https://hub.docker.com/r/martinhelmich/typo3/)
-[![Docker build status](https://img.shields.io/docker/build/martinhelmich/typo3.svg)](https://hub.docker.com/r/martinhelmich/typo3/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/martinhelmich/typo3)](https://hub.docker.com/r/martinhelmich/typo3)
+[![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/martinhelmich/typo3/latest?logo=docker)](https://hub.docker.com/r/martinhelmich/typo3)
+[![Build and push images](https://github.com/martin-helmich/docker-typo3/actions/workflows/build.yml/badge.svg)](https://github.com/martin-helmich/docker-typo3/actions/workflows/build.yml)
 
 This repository contains build instructions for a simple TYPO3 Docker image.
 
