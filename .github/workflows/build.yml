@@ -12,12 +12,11 @@ jobs:
     strategy:
       matrix:
         version:
-          - "6.2"
-          - "7.6"
           - "8.7"
           - "9.5"
           - "10.4"
           - "11.5"
+          - "12.4"
     
     steps:
       - uses: actions/checkout@v2
@@ -39,6 +38,6 @@ jobs:
           docker buildx build -t ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push .
           docker buildx imagetools create ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --tag ${{ secrets.DOCKERHUB_USER }}/typo3:$MAJOR
 
-          if [[ ${MAJOR} -eq 11 ]] ; then
+          if [[ ${MAJOR} -eq 12 ]] ; then
             docker buildx imagetools create ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --tag ${{ secrets.DOCKERHUB_USER }}/typo3:latest
           fi
