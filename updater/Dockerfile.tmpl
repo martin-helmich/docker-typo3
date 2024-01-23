@@ -37,8 +37,12 @@ RUN apt-get update && \
         libzip-dev \
         {{- end }}
         zlib1g-dev \
+        locales \
 # Install required 3rd party tools
         graphicsmagick && \
+# Configure locale
+    sed -i'' -e "s/^.*en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" /etc/locale.gen && \
+    locale-gen && update-locale LANG="en_US.UTF-8" LANGUAGE="en_US" && \
 # Configure extensions
     {{- if or (ge .Values.PHP.Major 8) (and (eq .Values.PHP.Major 7) (ge .Values.PHP.Minor 4)) }}
     docker-php-ext-configure gd --with-libdir=/usr/include/ --with-jpeg --with-freetype && \
