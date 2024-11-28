@@ -55,7 +55,7 @@ RUN apt-get update && \
 
 RUN cd /var/www/html && \
     wget -O download.tar.gz https://get.typo3.org/12.4.23 && \
-    echo "2cf24e71da87b37b14ee595962a591fdd59819966ff57efa7914b6a6626c8580 download.tar.gz" > download.tar.gz.sum && \
+    echo " download.tar.gz" > download.tar.gz.sum && \
     sha256sum -c download.tar.gz.sum && \
     tar -xzf download.tar.gz && \
     rm download.* && \
