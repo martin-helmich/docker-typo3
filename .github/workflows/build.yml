@@ -17,6 +17,7 @@ jobs:
           - "10.4"
           - "11.5"
           - "12.4"
+          - "13.1"
     
     steps:
       - uses: actions/checkout@v2
