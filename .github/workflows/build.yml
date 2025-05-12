@@ -12,11 +12,8 @@ jobs:
     strategy:
       matrix:
         version:
-          - "8.7"
-          - "9.5"
-          - "10.4"
-          - "11.5"
           - "12.4"
+          - "13.4"
     
     steps:
       - uses: actions/checkout@v2
