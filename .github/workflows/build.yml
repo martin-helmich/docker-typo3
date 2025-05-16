@@ -35,6 +35,6 @@ jobs:
           docker buildx build -t ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --push .
           docker buildx imagetools create ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --tag ${{ secrets.DOCKERHUB_USER }}/typo3:$MAJOR
 
-          if [[ ${MAJOR} -eq 12 ]] ; then
+          if [[ ${MAJOR} -eq 13 ]] ; then
             docker buildx imagetools create ${{ secrets.DOCKERHUB_USER }}/typo3:$VERSION --tag ${{ secrets.DOCKERHUB_USER }}/typo3:latest
           fi
