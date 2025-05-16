@@ -70,6 +70,11 @@ RUN cd /var/www/html && \
     touch FIRST_INSTALL && \
     chown -R www-data. .
 
+RUN wget "https://extensions.typo3.org/extension/download/typo3_console/7.1.2/zip/" -O typo3_console.zip && \
+    unzip typo3_console.zip -d /usr/src/typo3_console/ && \
+    rm typo3_console.zip && \
+    chmod +x /usr/src/typo3_console/typo3cms
+
 # Configure volumes
 VOLUME /var/www/html/fileadmin
 VOLUME /var/www/html/typo3conf
