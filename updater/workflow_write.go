@@ -29,13 +29,13 @@ jobs:
       - name: Build and start image
         run: |
           cd {{ .Destination }}
-          docker-compose build
-          docker-compose up -d
+          docker compose build
+          docker compose up -d
 
           sleep 20
 
           curl -vLf http://localhost
-          docker-compose down -v
+          docker compose down -v
 `
 
 func updateWorkflowFile(v *UpdateVersionSpec) (string, error) {

@@ -44,13 +44,17 @@ func processVersion(spec *UpdateVersionSpec) (string, *TYPO3Version, error) {
 			continue
 		}
 
+		if ver.ELTS {
+			continue
+		}
+
 		if matches := constraint.Check(v); matches {
 			matching = append(matching, ver)
 		}
 	}
 
 	if len(matching) == 0 {
-		return "", nil, fmt.Errorf("no TYPO3 version matching constraint %s", spec.Constraint)
+		return "", nil, fmt.Errorf("no TYPO3 version (non-ELTS) matching constraint %s", spec.Constraint)
 	}
 
 	sort.Sort(sort.Reverse(matching))

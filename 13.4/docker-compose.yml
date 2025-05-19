@@ -28,10 +28,10 @@ services:
     networks:
       - backend
   database:
-    image: mysql:5.7
+    image: mysql:8.0
     command:
-      - --character-set-server=utf8
-      - --collation-server=utf8_unicode_ci
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     environment:
       - "MYSQL_USER=${MYSQL_USER:-typo3}"
       - "MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}"

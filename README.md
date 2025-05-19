@@ -1,8 +1,9 @@
 TYPO3 Quickstart in Docker
 ==========================
 
-[![Docker Automated build](https://img.shields.io/docker/automated/martinhelmich/typo3.svg)](https://hub.docker.com/r/martinhelmich/typo3/)
-[![Docker build status](https://img.shields.io/docker/build/martinhelmich/typo3.svg)](https://hub.docker.com/r/martinhelmich/typo3/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/martinhelmich/typo3)](https://hub.docker.com/r/martinhelmich/typo3)
+[![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/martinhelmich/typo3/latest?logo=docker)](https://hub.docker.com/r/martinhelmich/typo3)
+[![Build and push images](https://github.com/martin-helmich/docker-typo3/actions/workflows/build.yml/badge.svg)](https://github.com/martin-helmich/docker-typo3/actions/workflows/build.yml)
 
 This repository contains build instructions for a simple TYPO3 Docker image.
 
@@ -21,15 +22,15 @@ This container does not ship a database management system; which means you'll ha
            -e MYSQL_PASSWORD=yourothersupersecretpassword \
            -e MYSQL_DATABASE=typo3 \
            mariadb:latest \
-           --character-set-server=utf8 \
-           --collation-server=utf8_unicode_ci
+           --character-set-server=utf8mb4 \
+           --collation-server=utf8mb4_unicode_ci
 
 2. Next, use this image to create your TYPO3 container and link it with the database container:
 
         $ docker run -d --name typo3-web \
             --link typo3-db:db \
             -p 80:80 \
-            martinhelmich/typo3:10
+            martinhelmich/typo3:13
 
 3. After that, simply open `http://localhost/` in your browser to start the TYPO3 install tool. **Note**: If you're using Docker Machine to run Docker on Windows or MacOS, you'll need the Docker VM's IP instead (which you can find out using the `docker-machine ip default` command).
 
@@ -57,8 +58,13 @@ Available tags
 
 This repository offers the following image tags:
 
-- `latest` maps to the latest available LTS version (currently, latest `10.4.*`)
-- `11.0` for the latest available version from the `11.0.*` branch.
+- `latest` maps to the latest available LTS version (currently, latest `13.4.*`)
+- `13.4` and `13` for the latest available version from the `13.*` respectively `13.4.*` branch.
+- `12.4` and `12` for the latest available version from the `12.*` respectively `12.4.*` branch.
+
+The following tags are still available, but not updated any longer:
+
+- `11.5` and `11` for the latest available version from the `11.*` respectively `11.5.*` branch.
 - `10.4` and `10` for the latest available version from the `10.*` respectively `10.4.*` branch.
 - `9.5` and `9` for the latest available version from the `9.*` respectively `9.5.*` branch.
 - `8.7` and `8` for the latest available version from the `8.*` respectively `8.7.*` branch.

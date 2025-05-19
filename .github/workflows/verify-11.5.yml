@@ -1,14 +1,14 @@
-name: Build and test TYPO3 10.4 image
+name: Build and test TYPO3 11.5 image
 
 on:
   push:
     paths:
-      - '10.4/Dockerfile'
-      - '10.4/docker-compose.yml'
+      - '11.5/Dockerfile'
+      - '11.5/docker-compose.yml'
   pull_request:
     paths:
-      - '10.4/Dockerfile'
-      - '10.4/docker-compose.yml'
+      - '11.5/Dockerfile'
+      - '11.5/docker-compose.yml'
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Build and start image
         run: |
-          cd 10.4
+          cd 11.5
           docker compose build
           docker compose up -d
 
