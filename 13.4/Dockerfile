@@ -55,7 +55,7 @@ RUN apt-get update && \
 
 RUN cd /var/www/html && \
     wget -O download.tar.gz https://get.typo3.org/13.4.24 && \
-    echo "007eba9373564a5e03d13e3d376921f8a35ce846f16bb60af5ae40fc543c9571 download.tar.gz" > download.tar.gz.sum && \
+    echo "de99fdb1e885bb6eb1ba6e3ea846f6fc47d10cd41f100792b3478d39d240ca2e download.tar.gz" > download.tar.gz.sum && \
     sha256sum -c download.tar.gz.sum && \
     tar -xzf download.tar.gz && \
     rm download.* && \
@@ -75,3 +75,8 @@ VOLUME /var/www/html/fileadmin
 VOLUME /var/www/html/typo3conf
 VOLUME /var/www/html/typo3temp
 VOLUME /var/www/html/uploads
+
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
