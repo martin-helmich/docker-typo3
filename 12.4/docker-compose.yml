@@ -21,6 +21,21 @@ services:
     build: .
     ports:
       - "80:80"
+    depends_on:
+      - database
+    environment:
+      TYPO3_DB_DRIVER: mysqli
+      TYPO3_DB_HOST: database
+      TYPO3_DB_PORT: "3306"
+      TYPO3_DB_USERNAME: "${MYSQL_USER:-typo3}"
+      TYPO3_DB_PASSWORD: "${MYSQL_PASSWORD:-password}"
+      TYPO3_DB_DBNAME: "${MYSQL_DATABASE:-typo3}"
+      TYPO3_SETUP_ADMIN_USERNAME: "${TYPO3_SETUP_ADMIN_USERNAME:-admin}"
+      TYPO3_SETUP_ADMIN_PASSWORD: "${TYPO3_SETUP_ADMIN_PASSWORD:-}"
+      TYPO3_SETUP_ADMIN_EMAIL: "${TYPO3_SETUP_ADMIN_EMAIL:-}"
+      TYPO3_PROJECT_NAME: "${TYPO3_PROJECT_NAME:-New TYPO3 Project}"
+      TYPO3_SETUP_CREATE_SITE: "${TYPO3_SETUP_CREATE_SITE:-http://localhost}"
+      TYPO3_SERVER_TYPE: apache
     volumes:
       - fileadmin:/var/www/html/fileadmin
       - typo3conf:/var/www/html/typo3conf
