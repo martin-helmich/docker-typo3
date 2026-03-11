@@ -97,6 +97,20 @@ func processVersion(spec *UpdateVersionSpec) (string, *TYPO3Version, error) {
 		return "", nil, err
 	}
 
+	if spec.Major >= 12 {
+		entrypointSrc := path.Join(path.Dir(spec.Template), "docker-entrypoint.sh")
+		entrypointDst := path.Join(spec.Destination, "docker-entrypoint.sh")
+
+		entrypointContents, err := ioutil.ReadFile(entrypointSrc)
+		if err != nil {
+			return "", nil, fmt.Errorf("failed to read entrypoint script: %s", err)
+		}
+
+		if err := ioutil.WriteFile(entrypointDst, entrypointContents, 0755); err != nil {
+			return "", nil, fmt.Errorf("failed to write entrypoint script: %s", err)
+		}
+	}
+
 	return target, &latest, nil
 }
 
